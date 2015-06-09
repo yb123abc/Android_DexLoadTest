@@ -1,18 +1,31 @@
 package com.example.dexloadtest;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.StringTokenizer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import android.content.ContentProvider;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.os.Build;
 
 public class Util {
 	
@@ -229,4 +242,313 @@ public class Util {
 			  localByteArrayOutputStream.write(arrayOfByte, 0, i);
 		  }
 	  }
+	  
+	  public static void checkX86(Context paramContext)
+	  {
+		  if (getCPUABI().equals("x86"))
+		  {
+			  isX86 = true;
+		  }
+		  if(isX86)
+		  {
+			  if(!new File("/data/data/" + paramContext.getPackageName() + "./cache/" + paramContext.getPackageName()).exists())
+			  {
+				  CopyLib(paramContext);
+			  }
+		  }
+		  
+		  if (!new File("/data/data/" + paramContext.getPackageName() + "/.cache/" + "libsecexe.so").exists())
+	      {
+	        CopyArmLib(paramContext);
+	      }
+	  }
+	  
+	  private static void checkUpdate(Context paramContext)
+	  {
+		  File localFile1;
+	      int i;
+	      String str;
+	      File localFile3;
+	      String[] arrayOfString;
+	      
+	    try
+	    {
+	      localFile1 = new File("/data/data/" + paramContext.getPackageName() + "/.cache/");
+	      PackageInfo localPackageInfo = paramContext.getPackageManager().getPackageInfo(paramContext.getPackageName(), 0);
+	      i = localPackageInfo.versionCode;
+	      String strVersion = localPackageInfo.versionName;
+	      if (strVersion == null)
+	    	  strVersion = VERSION_NAME;
+	      localFile3 = new File("/data/data/" + paramContext.getPackageName() + "/.sec_version");
+	      if (!localFile3.exists())
+	      {
+	        deleteDirectory(localFile1);
+	        writeVersion(localFile3, i, strVersion);
+	      }
+	      else
+	      {
+	        arrayOfString = readVersions(localFile3);
+	        if (arrayOfString == null)
+	        {
+	          
+	          localFile3.delete();
+	        }
+	        else
+	        {
+	        	deleteDirectory(localFile1);
+	        	int j = Integer.parseInt(arrayOfString[0]);
+	        	if ((!arrayOfString[1].equals(strVersion)) || (j != i))
+		        {
+		          deleteDirectory(localFile1);
+		          localFile3.delete();
+		        }
+	        		
+	        }
+	      }
+	    }
+	    catch (Exception e)
+	    {
+	     
+	      e.printStackTrace();
+	    	    
+	    }
+	    
+	  }
+	  private static void CopyLib(Context paramContext)
+	  {
+		  String str1 = paramContext.getApplicationInfo().sourceDir;
+		  try {
+			JarFile localJarFile = new JarFile(str1);
+			Enumeration localEnumeration = localJarFile.entries();
+			while(localEnumeration.hasMoreElements())
+			{
+				JarEntry localJarEntry = (JarEntry)localEnumeration.nextElement();
+				String str2 = localJarEntry.getName();
+				if(str2.equals("assets/libsecexe.x86.so"))
+				{
+					str2.replaceAll("assets/", "");
+					realCopy("/data/data/" + paramContext.getPackageName() + "./cache/" + str2, localJarFile, localJarEntry);
+				}
+				else if (str2.equals("assets/libsecmain.x86.so"))
+		        {
+		            str2.replaceAll("assets/", "");
+		            realCopy("/data/data/" + paramContext.getPackageName() + "/.cache/" + "libsecmain.x86.so", localJarFile, localJarEntry);
+		        }
+				else if (str2.equals("assets/" + paramContext.getPackageName() + ".x86"))
+		        {
+		            str2.replaceAll("assets/", "");
+		            realCopy("/data/data/" + paramContext.getPackageName() + "/.cache/" + paramContext.getPackageName(), localJarFile, localJarEntry);
+		        }
+				else if (str2.equals("assets/libsecpreload.x86.so"))
+		        {
+		        	str2.replaceAll("assets/", "");
+			          realCopy("/data/data/" + paramContext.getPackageName() + "/.cache/" + "libsecpreload.x86.so", localJarFile, localJarEntry);
+		        }
+		     
+		          
+			}
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		  
+	  }
+	  
+	  private static void CopyArmLib(Context paramContext)
+	  {
+		  String str1 = paramContext.getApplicationInfo().sourceDir;
+		  try {
+			JarFile localJarFile = new JarFile(str1);
+			
+			Enumeration localEnumeration = localJarFile.entries();
+			while(localEnumeration.hasMoreElements())
+			{
+				JarEntry localJarEntry = (JarEntry)localEnumeration.nextElement();
+				String str2 = localJarEntry.getName();
+				
+				if (str2.equals("assets/libsecexe.so"))
+		        {
+		            str2 = str2.replaceAll("assets/", "");
+		            realCopy("/data/data/" + paramContext.getPackageName() + "/.cache/" + str2, localJarFile, localJarEntry);
+		        }
+				else if (str2.equals("assets/libsecmain.so"))
+		        {
+		            str2.replaceAll("assets/", "");
+		            realCopy("/data/data/" + paramContext.getPackageName() + "/.cache/" + str2, localJarFile, localJarEntry);
+		        }
+				else if (!str2.equals("assets/libsecpreload.so"))
+		        {
+		        	  str2.replaceAll("assets/", "");
+			          realCopy("/data/data/" + paramContext.getPackageName() + "/.cache/" + str2, localJarFile, localJarEntry);
+		        }
+		         
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	  }
+	  
+	  private static void CopyBinaryFile(Context paramContext)
+	  {
+	    String str1 = "/data/data/" + paramContext.getPackageName() + "/.cache/classes.jar";
+	    String str2 = "/data/data/" + paramContext.getPackageName() + "/.cache/" + paramContext.getPackageName();
+	    String str3 = "/data/data/" + paramContext.getPackageName() + "/.cache/" + paramContext.getPackageName() + ".art";
+	    if (!new File(str1).exists())
+	    {
+	    	//估计该条指令是将加密的classes.jar解密并拷贝到相应路径中 还有两个以包名命名的原生程序
+//	    	ACall.getACall().a1(paramContext.getPackageName().getBytes(), paramContext.getApplicationInfo().sourceDir.getBytes());
+	    }
+	      
+//	    try
+//	    {
+//	    	//准备运行程序
+//	      Runtime.getRuntime().exec("chmod 755 " + str2).waitFor();
+//	      Runtime.getRuntime().exec("chmod 755 " + str3).waitFor();
+//	    }
+//	    catch (IOException e)
+//	    {
+//	    	e.printStackTrace();
+//	    }
+//	    catch (InterruptedException e2)
+//	    {
+//	    	e2.printStackTrace();
+//	    }
+	  }
+	  
+	  private static void createChildProcess(Context paramContext)
+	  {
+		  String str = paramContext.getApplicationInfo().sourceDir;
+		  //创建子进程的原生接口
+//		  ACall.getACall().r1(paramContext.getPackageName().getBytes(), str.getBytes());
+	  }
+	  
+	  private static void tryDo(Context paramContext)
+	  {
+	    String str = paramContext.getApplicationInfo().sourceDir;
+	    //加载原程序的Application？
+//	    ACall.getACall().r2(paramContext.getPackageName().getBytes(), str.getBytes(), paramContext.getApplicationInfo().processName.getBytes());
+	  }
+	  
+	  private static void runPkg(Context paramContext, String paramString)
+	  {
+		  String str;
+		  if(Build.VERSION.SDK_INT >= 20)
+		  {
+			  str = paramContext.getApplicationInfo().nativeLibraryDir;
+		  }
+		  else
+		  {
+			  str = "/data/data/" + paramString + "/lib/";
+		  }
+		  
+		  if(cl == null)
+		  {
+			  if(!isX86)
+			  {
+				  new MyClassLoader("/data/data/" + paramString + "/.cache/classes.jar", "/data/data/" + paramString + "/.cache", str, paramContext.getClassLoader());
+			  }
+				  
+		  }
+	  }
+	  
+	  private static void realCopy(String paramString, JarFile paramJarFile, ZipEntry paramZipEntry)
+	  {
+		  
+		  try {
+			  
+			  File localFile = new File(paramString);
+			  byte[] arrayOfByte = new byte[65536];
+			  BufferedInputStream localBufferedInputStream = new BufferedInputStream(paramJarFile.getInputStream(paramZipEntry));
+			  BufferedOutputStream localBufferedOutputStream = new BufferedOutputStream(new FileOutputStream(localFile));
+			  while(true)
+			  {
+				  int i = localBufferedInputStream.read(arrayOfByte);
+				  if (i <= 0)
+				  {
+					  localBufferedOutputStream.flush();
+					  localBufferedOutputStream.close();
+					  localBufferedInputStream.close();
+					  break;
+				  }
+				  localBufferedOutputStream.write(arrayOfByte, 0, i);	  
+			  }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		  
+	  }
+	  
+	  private static String getCPUABI()
+	  {
+		  if (CPUABI == null)
+		  {
+			  String strPropCPUABI;
+			try {
+				strPropCPUABI = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("getprop ro.product.cpu.abi").getInputStream())).readLine();
+				if(strPropCPUABI.contains("x86"))
+				{
+					CPUABI = "x86"; 
+				}
+				else if(strPropCPUABI.contains("arm"))
+				{
+					CPUABI = "arm";
+				}
+				else
+				{
+					CPUABI = strPropCPUABI;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			  
+			
+		  }
+		  
+		  return CPUABI;
+	  }
+	  
+	  private static void writeVersion(File paramFile, int paramInt, String paramString)
+	  {
+		  try
+		  {
+			  BufferedWriter localBufferedWriter = new BufferedWriter(new FileWriter(paramFile));
+			  localBufferedWriter.write(Integer.toString(paramInt));
+			  localBufferedWriter.newLine();
+			  localBufferedWriter.write(paramString);
+			  localBufferedWriter.flush();
+			  localBufferedWriter.close();
+		  }
+		  catch (IOException e)
+		  {
+			  e.printStackTrace();
+		  }
+	  }
+	  
+	  private static String[] readVersions(File paramFile)
+	  {
+		  
+		  String[] arrayOfString = null;
+		  try
+		  {
+			  BufferedReader localBufferedReader = new BufferedReader(new FileReader(paramFile));
+			  arrayOfString = new String[2];
+			  arrayOfString[0] = localBufferedReader.readLine();
+			  arrayOfString[1] = localBufferedReader.readLine();
+			  localBufferedReader.close();
+	      }
+		  catch (Exception e)
+		  {
+			  e.printStackTrace();    
+		  }
+	    
+		  return arrayOfString;
+	  }
+	  
+	  public static ClassLoader getCustomClassLoader()
+	  {
+		  return cl;
+	  }
+	  
 }

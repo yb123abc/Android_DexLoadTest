@@ -31,6 +31,19 @@ public class ApplicationWrapper extends Application {
 		super.onCreate();
 		
 		//创建RealApplication
+		if(Util.getCustomClassLoader() == null)
+		{
+			Util.runAll(this);
+		}
+		String str = FirstApplication;
+		this.cl = (DexClassLoader)Util.getCustomClassLoader();
+		realApplication = (Application)getClassLoader().loadClass(str).newInstance();
+		if (realApplication != null)
+	      {
+//	        localACall = ACall.getACall();
+//	        localACall.set2(this, realApplication, this.cl, getBaseContext());
+//	        localACall.at1(realApplication, getBaseContext());
+	      }
 		
 		
 	}

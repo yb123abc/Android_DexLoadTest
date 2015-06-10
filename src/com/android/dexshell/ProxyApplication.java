@@ -1,4 +1,4 @@
-package com.example.dexloadtest;
+package com.android.dexshell;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;

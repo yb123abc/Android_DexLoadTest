@@ -1,4 +1,4 @@
-package com.example.dexloadtest;
+package com.android.dexshell;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

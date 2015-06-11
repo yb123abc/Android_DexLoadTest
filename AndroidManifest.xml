@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="7"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="15" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +25,7 @@
         </activity>
         -->
         
-        <activity android:label="@string/title_activity_main" android:name="com.droider.crackme2010.MainActivity">
+        <activity android:label="@string/title_activity_main" android:name="com.droider.crackme0201.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -24,6 +24,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.ArrayMap;
+//import android.util.ArrayMap;
 
 public class DexLoadApplication extends Application {
 
@@ -57,6 +58,8 @@ public class DexLoadApplication extends Application {
 			Object currentActivityThread = RefInvoke.invokeStaticMethod(
 					"android.app.ActivityThread", "currentActivityThread", new Class[]{}, new Object[]{});
 			String packageName = this.getPackageName();
+//			HashMap mPackages = (HashMap) RefInvoke.getFieldObject(
+//					"android.app.ActivityThread", currentActivityThread, "mPackages");
 			ArrayMap mPackages = (ArrayMap) RefInvoke.getFieldObject(
 					"android.app.ActivityThread", currentActivityThread, "mPackages");
 			WeakReference wr = (WeakReference) mPackages.get(packageName);
@@ -128,6 +131,9 @@ public class DexLoadApplication extends Application {
 				RefInvoke.setFieldObject("android.app.ActivityThread", 
 						"mInitialApplication", currentActivityThread, app);
 				
+//				HashMap mProviderMap = (HashMap) RefInvoke.getFieldObject(
+//						"android.app.ActivityThread", currentActivityThread, 
+//						"mProviderMap");
 				ArrayMap mProviderMap = (ArrayMap) RefInvoke.getFieldObject(
 						"android.app.ActivityThread", currentActivityThread, 
 						"mProviderMap");

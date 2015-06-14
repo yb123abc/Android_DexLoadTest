@@ -5,15 +5,16 @@
  *      Author: pegasus
  */
 #include "RefInvoke.h"
+#include <jni.h>
 
 jobject invokeMethod(JNIEnv *env, jstring class_name,
-		jstring method_name, jclass[] pareTyple, jobject[] pareValues)
+		jstring method_name, jclass pareTyple[], jobject pareValues[])
 {
 
 }
 
 jobject invokeStaticMethod(JNIEnv *env, jstring class_name,
-		jstring method_name, jobject[] pareTyple, jclass[] pareValues)
+		jstring method_name, jobject pareTyple[], jclass pareValues[])
 {
 
 }

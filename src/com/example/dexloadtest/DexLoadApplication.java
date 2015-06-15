@@ -13,6 +13,9 @@ import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.json.JSONArray;
+
+import com.android.dexshell.DexLoadJni;
 import com.android.dexshell.RefInvoke;
 
 import dalvik.system.DexClassLoader;
@@ -55,24 +58,27 @@ public class DexLoadApplication extends Application {
 			}
 			
 			//配置动态加载程序
-			Object currentActivityThread = RefInvoke.invokeStaticMethod(
-					"android.app.ActivityThread", "currentActivityThread", new Class[]{}, new Object[]{});
-			String packageName = this.getPackageName();
-//			HashMap mPackages = (HashMap) RefInvoke.getFieldObject(
+//			Object currentActivityThread = RefInvoke.invokeStaticMethod(
+//					"android.app.ActivityThread", "currentActivityThread", new Class[]{}, new Object[]{});
+//			String packageName = this.getPackageName();
+////			HashMap mPackages = (HashMap) RefInvoke.getFieldObject(
+////					"android.app.ActivityThread", currentActivityThread, "mPackages");
+//			ArrayMap mPackages = (ArrayMap) RefInvoke.getFieldObject(
 //					"android.app.ActivityThread", currentActivityThread, "mPackages");
-			ArrayMap mPackages = (ArrayMap) RefInvoke.getFieldObject(
-					"android.app.ActivityThread", currentActivityThread, "mPackages");
-			WeakReference wr = (WeakReference) mPackages.get(packageName);
-			DexClassLoader dLoader = new DexClassLoader(dexFileName, dexPath, 
-					libPath, (ClassLoader)RefInvoke.getFieldObject(
-							"android.app.LoadedApk", wr.get(), "mClassLoader"));
-			RefInvoke.setFieldObject("android.app.LoadedApk", "mClassLoader", 
-					wr.get(), dLoader);
+//			WeakReference wr = (WeakReference) mPackages.get(packageName);
+//			DexClassLoader dLoader = new DexClassLoader(dexFileName, dexPath, 
+//					libPath, (ClassLoader)RefInvoke.getFieldObject(
+//							"android.app.LoadedApk", wr.get(), "mClassLoader"));
+//			RefInvoke.setFieldObject("android.app.LoadedApk", "mClassLoader", 
+//					wr.get(), dLoader);
+//			
+			DexLoadJni.changeClassLoader(getBaseContext());
 		
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 		}
+			
 	}
 	
 	@Override

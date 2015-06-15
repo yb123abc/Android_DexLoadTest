@@ -6,6 +6,7 @@
  */
 #include "RefInvoke.h"
 #include <jni.h>
+#include <string.h>
 
 jobject invokeMethod(JNIEnv *env, jstring class_name,
 		jstring method_name, jclass pareTyple[], jobject pareValues[])
@@ -13,9 +14,13 @@ jobject invokeMethod(JNIEnv *env, jstring class_name,
 
 }
 
-jobject invokeStaticMethod(JNIEnv *env, jstring class_name,
-		jstring method_name, jobject pareTyple[], jclass pareValues[])
+jobject invokeStaticMethod(JNIEnv* env, const char* class_name,
+		const char* method_name, const char* sig, jclass pareValues[])
 {
+
+	jclass obj_class = FindClass(env, class_name);
+	jmethodID methodId = GetMethodID(obj_class, method_name, sig);
+
 
 }
 

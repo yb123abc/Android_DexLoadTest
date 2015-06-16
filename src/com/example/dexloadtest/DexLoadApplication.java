@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.ArrayMap;
 //import android.util.ArrayMap;
@@ -72,7 +73,7 @@ public class DexLoadApplication extends Application {
 //			RefInvoke.setFieldObject("android.app.LoadedApk", "mClassLoader", 
 //					wr.get(), dLoader);
 //			
-			DexLoadJni.changeClassLoader(getBaseContext());
+			DexLoadJni.changeClassLoader(getBaseContext(),android.os.Build.VERSION.SDK_INT);
 		
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -99,6 +100,7 @@ public class DexLoadApplication extends Application {
 					}
 					else
 					{
+						DexLoadJni.changeApplication(getBaseContext(), "com.example.dexloadtest.FirstApplication", Build.VERSION.SDK_INT);
 						return;
 					}
 				} catch (NameNotFoundException e) {

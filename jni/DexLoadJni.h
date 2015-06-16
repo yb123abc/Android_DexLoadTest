@@ -13,15 +13,15 @@ extern "C" {
  * Signature: (Landroid/content/Context;)V
  */
 JNIEXPORT void JNICALL Java_com_android_dexshell_DexLoadJni_changeClassLoader
-  (JNIEnv *, jclass, jobject);
+  (JNIEnv *, jclass, jobject, jint);
 
 /*
  * Class:     com_android_dexshell_DexLoadJni
  * Method:    changeApplication
- * Signature: (Landroid/content/Context;Landroid/app/Application;)V
+ * Signature: (Landroid/content/Context;Ljava/lang/String;I)V
  */
 JNIEXPORT void JNICALL Java_com_android_dexshell_DexLoadJni_changeApplication
-  (JNIEnv *, jclass, jobject, jobject);
+  (JNIEnv *, jclass, jobject, jstring, jint);
 
 #ifdef __cplusplus
 }

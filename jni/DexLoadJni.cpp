@@ -96,6 +96,7 @@ JNIEXPORT void JNICALL Java_com_android_dexshell_DexLoadJni_changeClassLoader (J
 	env->DeleteLocalRef(jclassLoadedApk);
 	env->DeleteLocalRef(jclassWeakReference);
 
+	env->DeleteLocalRef(currentActivityThread);
 	env->DeleteLocalRef(jobjectClassLoader);
 	env->DeleteLocalRef(jobjectDexClassLoader);
 	env->DeleteLocalRef(jobjectLoadedApk);
@@ -105,6 +106,7 @@ JNIEXPORT void JNICALL Java_com_android_dexshell_DexLoadJni_changeClassLoader (J
 JNIEXPORT void JNICALL Java_com_android_dexshell_DexLoadJni_changeApplication(JNIEnv *env, jclass arg, jobject context, jstring jstrApplication, jint os_version)
 {
 
+	__android_log_write(ANDROID_LOG_DEBUG, "Tag", "1");
 	//获得ActivityThread对象
 	jclass jclassActivityThread = env->FindClass("android/app/ActivityThread");
 	jmethodID methodCurrentActivityThread =
@@ -193,11 +195,55 @@ JNIEXPORT void JNICALL Java_com_android_dexshell_DexLoadJni_changeApplication(JN
 	jmethodID jmethodID_it_hasNext =
 			env->GetMethodID(jclassIterator, "hasNext", "()Z");
 	bool hasNext = env->CallBooleanMethod(jobjectIt, jmethodID_it_hasNext);
+	jmethodID jmethodID_it_next =
+			env->GetMethodID(jclassIterator, "next", "()Ljava/lang/Object;");
 
+	jclass jclassProviderClientRecord =
+			env->FindClass("android/app/ActivityThread$ProviderClientRecord");
+	jfieldID jfieldIDLocalProvider =
+					env->GetFieldID(jclassProviderClientRecord,
+							"mLocalProvider",
+							"Landroid/content/ContentProvider;");
+	jobject jobjectLocalProvider = NULL;
 	while(hasNext)
 	{
+		jobjectLocalProvider =
+				env->CallObjectMethod(jobjectIt, jmethodID_it_next);
+
+		env->SetObjectField(context, jfieldIDLocalProvider, jobjectApplicaiton);
+		if(jobjectLocalProvider != NULL)
+		{
+			env->DeleteLocalRef(jobjectLocalProvider);
+		}
 		hasNext = env->CallBooleanMethod(jobjectIt, jmethodID_it_hasNext);
 	}
+
+	jclass jclassApplication = env->FindClass("android/app/Application");
+	jmethodID jmethodID_app_onCreate =
+			env->GetMethodID(jclassApplication, "onCreate", "()V");
+	env->CallVoidMethod(jobjectApplicaiton, jmethodID_app_onCreate);
+
+	//释放资源
+	env->DeleteLocalRef(jclassActivityThread);
+	env->DeleteLocalRef(jclassAppBindData);
+	env->DeleteLocalRef(jclassApplicationInfo);
+	env->DeleteLocalRef(jclassCollection);
+	env->DeleteLocalRef(jclassIterator);
+	env->DeleteLocalRef(jclassLoadedApk);
+	env->DeleteLocalRef(jclassProviderMap);
+	env->DeleteLocalRef(jclassProviderClientRecord);
+	env->DeleteLocalRef(jclassApplication);
+
+	env->DeleteLocalRef(currentActivityThread);
+	env->DeleteLocalRef(jobjectApplicaiton);
+	env->DeleteLocalRef(jobjectBoundApplication);
+	env->DeleteLocalRef(jobjectLoadedApkInfo);
+	env->DeleteLocalRef(jobjectOldApplication);
+	env->DeleteLocalRef(jobjectProviderMap);
+	env->DeleteLocalRef(jobjectValues);
+	env->DeleteLocalRef(jobject_appinfo_In_AppBindData);
+	env->DeleteLocalRef(jobject_appinfo_In_LoadedApk);
+	env->DeleteLocalRef(jobjectIt);
 
 }
 

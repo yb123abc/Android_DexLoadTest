@@ -9,11 +9,12 @@
         android:targetSdkVersion="15" />
 
     <application
+        android:debuggable="true"
         android:allowBackup="true"
         android:name="com.example.dexloadtest.DexLoadApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:debuggable="true">
+        android:theme="@style/AppTheme">
         <!--  <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >

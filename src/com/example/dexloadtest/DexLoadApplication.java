@@ -55,6 +55,12 @@ public class DexLoadApplication extends Application {
 				dexPathFile.mkdir();
 			}
 			
+			File libPathFile = new File(libPath);
+			if(!libPathFile.exists())
+			{
+				libPathFile.mkdir();
+			}
+			
 			dexFileName = dexPath + "/" +"classes.jar";
 			File dexFile = new File(dexFileName);
 			if(!dexFile.exists())
@@ -66,7 +72,7 @@ public class DexLoadApplication extends Application {
 				
 			}
 			
-			libFileName = dexPath + "/" + "libDexLoadJni.so";
+			libFileName = dexPath + "/" + "libDexLoadJniArm.so";
 			libX86FileName = dexPath + "/" + "libDexLoadJniX86.so";
 			libMipsFileName = dexPath + "/" +"libDexLoadJniMips.so";
 			libV7FileName = dexPath + "/" + "libDexLoadJniV7.so";

@@ -10,22 +10,23 @@ public class DexLoadJni {
 		String strLibrary = "/data/data/" + Util.mContext.getPackageName() + "/cache/";
 		if(Util.getCPUABI().equals("x86"))
 		{
-			strLibrary += "libDexLoadJniX86";
+			strLibrary += "libDexLoadJniX86.so";
 		}
 		else if(Util.getCPUABI().equals("mips"))
 		{
-			strLibrary += "libDexLoadJniMips";
+			strLibrary += "libDexLoadJniMips.so";
 		}
 		else if(Util.getCPUABI().equals("armeabi-v7a"))
 		{
-			strLibrary += "libDexLoadJniV7";
+			strLibrary += "libDexLoadJniV7.so";
 		}
 		else
 		{
-			strLibrary += "libDexLoadJni";
+			strLibrary += "libDexLoadJniArm.so";
 		}
 		
-		System.loadLibrary(strLibrary);
+		System.load(strLibrary);
+		
 	}
 	
 	
